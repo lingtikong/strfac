@@ -1,0 +1,9 @@
+This code aims to evaluate the structure factor S(q) and pair-correlation g(r)
+for all or selected atoms in the system; the supported position file format is
+LAMMPS dump (atom).
+
+For structure factor calculations, the result will be correct only for constant
+cell shape runs.
+
+L.T. Kong, konglt@gmail.com
+2009
