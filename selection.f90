@@ -55,12 +55,14 @@ implicit none
          write(*,'(12x,"index  <  atom_index" )')
          write(*,'(12x,"index  <= atom_index" )')
          write(*,'(12x,"index  <> atom_index1 atom_index2" )')
+         write(*,'(12x,"index  >< atom_index1 atom_index2" )')
          write(*,'(12x,"index  =  num1 num2 ...")')
          write(*,'(12x,"index  m= num1 num2" )')
          write(*,'(12x,"index  m= num0 num1 num2")')
          write(*,'(12x,"x      >  fractiona-position")')
          write(*,'(12x,"x      <  fractiona-position")')
          write(*,'(12x,"x      <> fractiona-position1 fractiona-position2")')
+         write(*,'(12x,"x      >< fractiona-position1 fractiona-position2")')
          write(*,'(10x,"You can use & and/or | to make combination.")')
          cycle
       endif
@@ -249,6 +251,18 @@ implicit none
                   endif
                   atsel(1:nums(1)-1)     = 0
                   atsel(nums(2)+1:natom) = 0
+               case ( '><' )
+                  if ( idum.ne.2 ) then
+                     write(*,'(/,10x,"Error: index >< operation takes and only takes 2 parameters!")')
+                     exit
+                  endif
+                  nums(1) = min(natom, max(1,nums(1)))
+                  nums(2) = min(natom, max(1,nums(2)))
+                  if ( nums(1).gt.nums(2) ) then
+                     write(*,'(/,10x,"Error: wrong arguments for index >< operation!")')
+                     exit
+                  endif
+                  atsel(nums(1)+1:nums(2)-1) = 0
                case ( 'm=' )
                   if ( idum.lt.2.or.idum.gt.3 ) then
                      write(*,'(/,10x,"Error: index m= operation takes 2-3 parameters!")')
@@ -315,6 +329,19 @@ implicit none
                      exit
                   endif
                   atsel(nums(1):nums(2)) = 1
+               case ( '><' )
+                  if ( idum.ne.2 ) then
+                     write(*,'(/,10x,"Error: index <> operation takes and only takes 2 parameters!")')
+                     exit
+                  endif
+                  nums(1) = min(natom, max(1,nums(1)))
+                  nums(2) = min(natom, max(1,nums(2)))
+                  if ( nums(1).gt.nums(2) ) then
+                     write(*,'(/,10x,"Error: wrong arguments for index >< operation!")')
+                     exit
+                  endif
+                  atsel(1:nums(1))     = 1
+                  atsel(nums(2):natom) = 1
                case ( 'm=' )
                   if ( idum.ne.2.and.idum.ne.3 ) then
                      write(*,'(/,10x,"Error: index m= operation takes 2-3 parameters!")')
@@ -385,6 +412,14 @@ implicit none
                   do i = 1, natom
                      if ( OneImg(dir,i).lt.fpos(1).or.OneImg(dir,i).gt.fpos(2) ) atsel(i) = 0
                   enddo
+               case ( '><'      )
+                  if ( idum.ne.2 ) then
+                     write(*,'(/,10x,"Error: ",A2," >< operation takes and only takes 2 parameters!")') trim(op)
+                     exit
+                  endif
+                  do i = 1, natom
+                     if ( OneImg(dir,i).ge.fpos(1).and.OneImg(dir,i).le.fpos(2) ) atsel(i) = 0
+                  enddo
                case default
                   write(*,'(/,10x,"Error: Unknown index operation of ", A, "!")') op
                end select
@@ -413,6 +448,14 @@ implicit none
                   endif
                   do i = 1, natom
                      if ( OneImg(dir,i).ge.fpos(1).and.OneImg(dir,i).le.fpos(2) ) atsel(i) = 1
+                  enddo
+               case ( '><'      )
+                  if ( idum.ne.2 ) then
+                     write(*,'(/,10x,"Error: ",A2," >< operation takes and only takes 2 parameters!")') trim(op)
+                     exit
+                  endif
+                  do i = 1, natom
+                     if ( OneImg(dir,i).le.fpos(1).or.OneImg(dir,i).ge.fpos(2) ) atsel(i) = 1
                   enddo
                case default
                   write(*,'(/,10x,"Error: Unknown index operation of ", A, "!")') op
