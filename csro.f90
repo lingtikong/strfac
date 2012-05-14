@@ -7,7 +7,7 @@ implicit none
    private
    public :: CSRO_Init, CSRO_Analyse, CSRO_Output
    !----------------------------------------------------------------------------
-   integer, allocatable :: NumNei(:,:), NatomPerType(:)
+   real(q), allocatable :: NumNei(:,:), NatomPerType(:)
    real(q), allocatable :: concetration(:)
    !----------------------------------------------------------------------------
    real(q) :: HArcut, rcutsq
@@ -26,8 +26,8 @@ contains
       if (allocated(NatomPerType )) deallocate(NatomPerType )
       if (allocated(concetration )) deallocate(concetration )
       allocate( NumNei(ntype, ntype), NatomPerType(ntype), concetration(ntype) )
-      NumNei       = 0
-      NatomPerType = 0
+      NumNei       = 0.D0
+      NatomPerType = 0.D0
       !-------------------------------------------------------------------------
    return
    end subroutine CSRO_Init
@@ -35,19 +35,20 @@ contains
    subroutine CSRO_Analyse()
    implicit none
       !-------------------------------------------------------------------------
-      integer :: Iimg, II, JJ, i, j, ip, jp
+      integer :: Iimg, II, JJ, i, j, ip, jp, nproc
       real(q) :: Rij(3), r2, posi(3)
-      character(len=1) :: signals(3) = (/ '\', '|', '/' /)
+      character(len=1) :: signals(4) = (/ '\', '|', '/','-' /)
       !-------------------------------------------------------------------------
-      write(*,'(10x,"Analysing ...", $)')
+      write(*,'(10x,"Analysing ... ", $)')
       call CPU_TIME( tmbeg )
       do Iimg = istr, iend, inc
-         write(*,777) char(8), signals(mod(Iimg,3)+1)
+         write(*,777) char(8), signals(mod(Iimg,4)+1)
+         OneImg = atpos(:,:,Iimg)
          !----------------------------------------------------------------------
          do II = 1, nsel
             i  = list(II)
             ip = attyp(i)
-            NatomPerType(ip) = NatomPerType(ip) + 1
+            NatomPerType(ip) = NatomPerType(ip) + 1.D0
             !
             posi = OneImg(:,i)
             !
@@ -62,14 +63,14 @@ contains
                r2  = sum(Rij*Rij)
                !
                if (r2.le.rcutsq) then
-                  NumNei(ip,jp) = NumNei(ip,jp) + 1
-                  NumNei(jp,ip) = NumNei(jp,ip) + 1
+                  NumNei(ip,jp) = NumNei(ip,jp) + 1.D0
+                  NumNei(jp,ip) = NumNei(jp,ip) + 1.D0
                endif
             enddo
          enddo
          !----------------------------------------------------------------------
       enddo
-      concetration = dble(NatomPerType) / dble(nsel*((iend-istr)/inc+1))
+      concetration = NatomPerType / dble(nsel*((iend-istr)/inc+1))
       call CPU_TIME( tmend )
       write(*, 888) char(8), tmend-tmbeg
 777   format(2A1,$)
@@ -109,8 +110,8 @@ contains
       fmtstr = '(14x,I2,4x,??(1x,F10.6,1x))'
       write(fmtstr(12:13), '(I2.2)') ntype
       do i = 1, ntype
-         ntotal = dble(sum(NumNei(i,:)))
-         write(*, fmtstr) i, 1.D0 -dble(NumNei(i,:))/(ntotal*concetration)
+         ntotal = sum(NumNei(i,:))
+         write(*, fmtstr) i, 1.D0 -NumNei(i,:)/(ntotal*concetration)
       enddo
       fmtstr = '(10x,10("="),??(12("=")),/)'
       write(fmtstr(14:15), '(I2.2)') ntype

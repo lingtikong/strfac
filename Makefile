@@ -17,7 +17,8 @@ FREE = -ffree-form -ffree-line-length-none
 #DEBUG  = -g -traceback #-D_DEBUG
 #
 # MPI or OpenMP
-#MPI = -DOMP -fopenmp
+#MPI = -cpp -DOMP -fopenmp
+#LIB = -fopenmp
 #
 BASE = strfac
 MAIN = ${BASE}
