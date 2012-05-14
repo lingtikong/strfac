@@ -44,6 +44,7 @@ contains
       do Iimg = istr, iend, inc
          write(*,777) char(8), signals(mod(Iimg,4)+1)
          OneImg = atpos(:,:,Iimg)
+         prd = box(:,Iimg)
          !----------------------------------------------------------------------
          do II = 1, nsel
             i  = list(II)
