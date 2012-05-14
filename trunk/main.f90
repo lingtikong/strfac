@@ -12,7 +12,7 @@ implicit none
    integer          :: idum, narg, newselect
    character(len=5) :: jobstr(12) = (/ "S(q) ","Sq(t)", "Sq(r)", "g(r) ", "g(r) ", &
                      & "g(r) ", "g(r) ", "HA   ", "HA   ", "CSRO ", "dump ", "S(t) " /)
-   character(len=1) :: signals(3) = (/ '\', '|', '/' /)
+   character(len=1) :: signals(4) = (/ '\', '|', '/','-' /)
    !----------------------------------------------------------------------------
    ! Get dump file name
    narg = iargc()
@@ -131,7 +131,7 @@ implicit none
                OneImg = atpos(:,:,image)
                call strfaccal
                sqsum = sqsum + sqcur *conjg(sqcur)
-               write(*, 777) char(8), signals(mod(image,3)+1)
+               write(*, 777) char(8), signals(mod(image,4)+1)
             enddo
             sqsum = sqsum/dble(nimgused)
             
@@ -160,7 +160,7 @@ implicit none
                OneImg = atpos(:,:,image)
                call strfacOne
                sqsum(image,1,1) = sqcur(image,1,1) *conjg(sqcur(image,1,1))
-               write(*, 777) char(8), signals(mod(image,3)+1)
+               write(*, 777) char(8), signals(mod(image,4)+1)
             enddo
             sqsum = sqsum/dble(nsel)
             !
@@ -224,7 +224,7 @@ implicit none
                grsum = grsum + dble(nncur)*grwt
                nnsum = nnsum + dble(nncur)
                !
-               write(*, 777) char(8), signals(mod(image,3)+1)
+               write(*, 777) char(8), signals(mod(image,4)+1)
             enddo
             nnsum = nnsum / ( dble(nsel)*dble(nimgused) )
             !
@@ -300,7 +300,7 @@ implicit none
                !
                grsum = grsum + dble(nncur)*grwt
                nnsum = nnsum + dble(nncur)
-               write(*,777) char(8), signals(mod(image,3)+1)
+               write(*,777) char(8), signals(mod(image,4)+1)
             enddo
             nnsum = nnsum / (dble(nsel)*dble(nimgused))
             !
@@ -394,7 +394,7 @@ implicit none
                grsum = grsum + dble(nncur)*grwt
                nnsum = nnsum + dble(nncur)
                !
-               write(*, 777) char(8), signals(mod(image,3)+1)
+               write(*, 777) char(8), signals(mod(image,4)+1)
             enddo
             nnsum = nnsum / ( dble(nsrc)*dble(nimgused) )
             !
@@ -474,7 +474,7 @@ implicit none
                grsum = grsum + dble(nncur)*grwt
                nnsum = nnsum + dble(nncur)
                !
-               write(*, 777) char(8), signals(mod(image,3)+1)
+               write(*, 777) char(8), signals(mod(image,4)+1)
             enddo
             nnsum = nnsum / ( dble(nsrc)*dble(nimgused) )
             !

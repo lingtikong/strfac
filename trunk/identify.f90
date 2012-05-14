@@ -13,7 +13,7 @@ implicit none
    real(q), allocatable :: postmp(:,:,:), boxtmp(:,:), tstmp(:)
    integer, allocatable :: wraptmp(:,:,:)
    real(q), parameter   :: zero = 1.D-6
-   character(len=1)     :: signals(3) = (/ '\', '|', '/' /)
+   character(len=1)     :: signals(4) = (/ '\', '|', '/','-' /)
    character(len=256)   :: fmtstr
    !----------------------------------------------------------------------------
    subname = 'identify'
@@ -216,7 +216,7 @@ implicit none
       box(:,nimage) = (/ Lx, Ly, Lz, xy, xz, yz /)
       timestep(nimage) = istep
       !
-      it = mod(nimage,3) + 1
+      it = mod(nimage,4) + 1
       write(*,'(2A1,$)') char(8), signals(it)
       !
       read(ioin, '(A)', iostat=ioerr ) oneline
